@@ -1,0 +1,92 @@
+1.下载ActiveMQ
+去官方网站下载：http://activemq.apache.org/
+我下载的时候是 ActiveMQ 5.8.0 Release版
+
+2.运行ActiveMQ
+解压缩apache-activemq-5.8.0-bin.zip，然后双击apache-activemq-5.5.1\bin\activemq.bat运行ActiveMQ程序。
+
+启动ActiveMQ以后，登陆：http://localhost:8161/admin/，创建一个Queue，命名为FirstQueue。
+
+3.创建Eclipse项目并运行
+创建java project：ActiveMQ-5.8，新建lib文件夹
+打开apache-activemq-5.8.0\lib目录
+拷贝
+activemq-broker-5.8.0.jar
+activemq-client-5.8.0.jar
+geronimo-j2ee-management_1.1_spec-1.0.1.jar
+geronimo-jms_1.1_spec-1.1.1.jar
+slf4j-api-1.6.6.jar
+这5个jar文件到lib文件夹中,并Build Path->Add to Build Path 
+
+5.测试过程
+先运行:Receiver.java
+再运行:Sender.java
+
+可以看到结果
+Sender运行后:
+发送消息：ActiveMq 发送的消息1
+发送消息：ActiveMq 发送的消息2
+发送消息：ActiveMq 发送的消息3
+发送消息：ActiveMq 发送的消息4
+发送消息：ActiveMq 发送的消息5
+
+Receiver运行后:
+收到消息ActiveMq 发送的消息1
+收到消息ActiveMq 发送的消息2
+收到消息ActiveMq 发送的消息3
+收到消息ActiveMq 发送的消息4
+收到消息ActiveMq 发送的消息5
+
+在Receiver.java中，可以设置一个时间，比如receive(500000)，如下代码所示：
+Java代码  收藏代码
+
+    TextMessage message = (TextMessage) consumer.receive(500000);  
+    
+    这个时候运行Receiver.java的话，会使得这个Receiver.java一直运行500秒，在eclipse中可以发现：
+    
+    <dependency>
+  <groupId>org.apache.activemq</groupId>
+  <artifactId>activemq-core</artifactId>
+  <version>5.5.1</version>
+</dependency>
+
+
+
+一：activeMQ的管理后台 http://localhost:8161/admin 默认用户名密码admin admin
+默认端口8061，采用的JETTY服务器，所以修改端口啊密码啊也是改JETTY的配置jetty.xml jetty-realm.xml 
+我已把密码改为weigq 端口改为8191
+注意：
+<bean id="securityConstraint" class="org.eclipse.jetty.util.security.Constraint">
+        <property name="name" value="BASIC" />
+        <property name="roles" value="admin" />
+        <property name="authenticate" value="true" />
+    </bean>
+第三个属性authenticate要为true.
+端口部分的
+<bean id="Server" class="org.eclipse.jetty.server.Server" init-method="start"
+        destroy-method="stop">
+
+        <property name="connectors">
+            <list>
+                <bean id="Connector" class="org.eclipse.jetty.server.nio.SelectChannelConnector">
+                    <property name="port" value="8191" />
+                </bean>
+二：activeMQ消息使用者的端口，用户名，密码
+在activemq.xml中修改。
+端口容易改，默认是61616，我给改为61617
+要改用户名密码，须在<broker>标签里的<systemUsage>标签前加入
+<!-- plugins is added by weigq .use for setting uid and pwd by msg users  -->
+         <plugins>
+         	<simpleAuthenticationPlugin>
+         		<users>
+         			<authenticationUser username="${activemq.username}" password="${activemq.password}" groups="users,admins"/>
+         		</users>
+         	</simpleAuthenticationPlugin>
+         </plugins>
+用户名密码在credentials.properties 中修改
+发现另一个监听端口：amqp://0.0.0.0:5672不清楚如何使用。建议可注释
+
+
+
+
+

@@ -1,0 +1,12 @@
+JMS 定义了两种方式：Quere（点对点）；Topic（发布/订阅）。
+
+ConnectionFactory 是连接工厂，负责创建Connection。
+
+Connection 负责创建 Session。
+
+Session 创建 MessageProducer（用来发消息） 和 MessageConsumer（用来接收消息）。
+
+Destination 是消息的目的地。
+
+
+
